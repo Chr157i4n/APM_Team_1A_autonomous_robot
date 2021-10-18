@@ -1,4 +1,8 @@
 #include <Arduino.h>
+#include "test.h"
+#include <Ultrasonic.h>
+
+Ultrasonic ultrasonic1(12, 13);
 
 void setup() {
   // put your setup code here, to run once:
@@ -16,4 +20,6 @@ void loop() {
   digitalWrite(LED_BUILTIN, LOW);
   Serial.println("LED AUS");
   delay(1000);
+
+  Serial.println(add(1,2));
 }
