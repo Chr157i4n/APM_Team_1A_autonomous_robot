@@ -19,8 +19,4 @@ void loop() {
   delay(1000);
   digitalWrite(LED_BUILTIN, LOW);
   Serial.println("LED AUS");
-  delay(1000);
-  delay(1000); // test3
-  delay(1000); //test2
-  Serial.println("Delay");
 }
