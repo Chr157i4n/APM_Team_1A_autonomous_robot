@@ -21,4 +21,6 @@ void loop() {
   Serial.println("LED AUS");
   delay(1000);
   delay(1000); // test3
+  delay(500); //test1
+  Serial.println("Delay");
 }
