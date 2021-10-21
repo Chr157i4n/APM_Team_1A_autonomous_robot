@@ -9,6 +9,7 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
   Serial.println("Neustart");
+  delay(1000);
 }
 
 void loop() {
