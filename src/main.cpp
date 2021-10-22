@@ -1,9 +1,14 @@
 #include <Arduino.h>
+#include "TB6612MotorShield.h"
+
+TB6612MotorShield motor;
 
 void setup() {
-  // put your setup code here, to run once:
+  
+  motor.setSpeeds(100,100);
+
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+
 }
