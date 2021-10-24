@@ -11,9 +11,13 @@ void setup() {
   pinMode(12,OUTPUT);
   digitalWrite(12,HIGH);
 
-  motor.setSpeeds(100,100);
+  motor.setSpeeds(0,0);           //Ruckbewegung der Motoren am Anfang fällt hiermit weg.
   delay(2000);
-  motor.setSpeeds(-100,-100);
+  motor.setSpeeds(100,-100);
+  delay(2000);
+  motor.setSpeeds(0,0);
+  delay(2000);
+  motor.setSpeeds(-100,100);
   delay(2000);
   motor.setSpeeds(0,0);
 
