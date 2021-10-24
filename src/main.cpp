@@ -17,6 +17,7 @@ void setup() {
 
 void loop() {
 
-  Serial.println(lineSensor.getValue());
+  Serial.println("test");
+  //Serial.println(lineSensor.getValue());
 
 }
