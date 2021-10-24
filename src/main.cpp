@@ -9,6 +9,11 @@ int baseSpeed = 200;
 int sensorValue = 0;
 int normalizedsensorValue = 0;
 
+void setMotorSpeeds(int m1Speed, int m2Speed){
+  
+  motor.setSpeeds(m1Speed, -m2Speed);
+}
+
 void setup() {
 
   Serial.begin(9600);
@@ -40,6 +45,6 @@ void loop() {
   Serial.print(" rS: ");
   Serial.println(baseSpeed-normalizedsensorValue);
 
-  motor.setSpeeds((baseSpeed+normalizedsensorValue),-(baseSpeed-normalizedsensorValue)); 
+  setMotorSpeeds(baseSpeed+normalizedsensorValue, baseSpeed-normalizedsensorValue); 
 
 }
