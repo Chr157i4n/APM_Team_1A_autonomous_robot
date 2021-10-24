@@ -31,6 +31,9 @@ void loop() {
   Serial.print("raw: ");
   Serial.print(sensorValue);
 
+  Serial.print("norm: ");
+  Serial.print(normalizedsensorValue);
+
   Serial.print("lS: ");
   Serial.print(baseSpeed+normalizedsensorValue);
 
