@@ -5,7 +5,7 @@
 TB6612MotorShield motor;
 LineSensor lineSensor(A7);
 
-int baseSpeed = 100;
+int baseSpeed = 200;
 int sensorValue = 0;
 int normalizedsensorValue = 0;
 
@@ -28,16 +28,16 @@ void loop() {
   sensorValue = lineSensor.getValue();
   normalizedsensorValue = (sensorValue - 512) * 0.1;
 
-  Serial.print("raw: ");
+  Serial.print(" raw: ");
   Serial.print(sensorValue);
 
-  Serial.print("norm: ");
+  Serial.print(" norm: ");
   Serial.print(normalizedsensorValue);
 
-  Serial.print("lS: ");
+  Serial.print(" lS: ");
   Serial.print(baseSpeed+normalizedsensorValue);
 
-  Serial.print("rS: ");
+  Serial.print(" rS: ");
   Serial.println(baseSpeed-normalizedsensorValue);
 
   motor.setSpeeds((baseSpeed+normalizedsensorValue),-(baseSpeed-normalizedsensorValue)); 
