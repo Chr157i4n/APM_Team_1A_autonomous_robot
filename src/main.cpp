@@ -40,6 +40,6 @@ void loop() {
   Serial.print("rS: ");
   Serial.println(baseSpeed-normalizedsensorValue);
 
-  motor.setSpeeds(baseSpeed+normalizedsensorValue,-baseSpeed-normalizedsensorValue); 
+  motor.setSpeeds((baseSpeed+normalizedsensorValue),-(baseSpeed-normalizedsensorValue)); 
 
 }
