@@ -9,7 +9,7 @@ void setup() {
 
   //motor.setSpeeds(100,100);
 
-  Serial.begin(115200);
+  Serial.begin(9600);
   pinMode(12,OUTPUT);
   digitalWrite(12,HIGH);
 
