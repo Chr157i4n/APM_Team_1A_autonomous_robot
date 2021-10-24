@@ -3,7 +3,7 @@
 #include "LineSensor.h"
 
 //TB6612MotorShield motor;
-LineSensor lineSensor(A1);
+LineSensor lineSensor(A7);
 
 void setup() {
 
