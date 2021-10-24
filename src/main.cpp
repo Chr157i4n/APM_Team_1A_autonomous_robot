@@ -26,6 +26,7 @@ void setMotorSpeeds(int m1Speed, int m2Speed){
 
 void setup() {
 
+  lineSensorPID.SetOutputLimits(-100,100);
   lineSensorPID.SetMode(AUTOMATIC);
 
   Serial.begin(9600);
