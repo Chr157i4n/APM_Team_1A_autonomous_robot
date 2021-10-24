@@ -1,20 +1,32 @@
 #include <Arduino.h>
+#include <PID_v1.h>
+
 #include "TB6612MotorShield.h"
 #include "LineSensor.h"
 
+#define PIN_LINESENSOR A7
+
 TB6612MotorShield motor;
-LineSensor lineSensor(A7);
+LineSensor lineSensor(PIN_LINESENSOR);
+
 
 int baseSpeed = 200;
-int sensorValue = 0;
-int normalizedsensorValue = 0;
+double Setpoint = 512, lineSensorValue, lineSensorPIDValue;
+
+//Specify the links and initial tuning parameters
+double Kp=0.1, Ki=0, Kd=0;
+PID lineSensorPID(&lineSensorValue, &lineSensorPIDValue, &Setpoint, Kp, Ki, Kd, DIRECT);
+
 
 void setMotorSpeeds(int m1Speed, int m2Speed){
   
   motor.setSpeeds(m1Speed, -m2Speed);
+
 }
 
 void setup() {
+
+  lineSensorPID.SetMode(AUTOMATIC);
 
   Serial.begin(9600);
   pinMode(12,OUTPUT);
@@ -27,24 +39,24 @@ void setup() {
 }
 
 void loop() {
+  
+  lineSensorValue = lineSensor.getValue();
+  //normalizedsensorValue = (sensorValue - 512) * 0.1;
 
-  //Serial.println("test");
-
-  sensorValue = lineSensor.getValue();
-  normalizedsensorValue = (sensorValue - 512) * 0.1;
+  lineSensorPID.Compute();
 
   Serial.print(" raw: ");
-  Serial.print(sensorValue);
+  Serial.print(lineSensorValue);
 
-  Serial.print(" norm: ");
-  Serial.print(normalizedsensorValue);
+  Serial.print(" pid: ");
+  Serial.print(lineSensorPIDValue);
 
   Serial.print(" lS: ");
-  Serial.print(baseSpeed+normalizedsensorValue);
+  Serial.print(baseSpeed+lineSensorPIDValue);
 
   Serial.print(" rS: ");
-  Serial.println(baseSpeed-normalizedsensorValue);
+  Serial.println(baseSpeed-lineSensorPIDValue);
 
-  setMotorSpeeds(baseSpeed+normalizedsensorValue, baseSpeed-normalizedsensorValue); 
+  setMotorSpeeds(baseSpeed+lineSensorPIDValue, baseSpeed-lineSensorPIDValue); 
 
 }
