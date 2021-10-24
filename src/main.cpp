@@ -2,12 +2,12 @@
 #include "TB6612MotorShield.h"
 #include "LineSensor.h"
 
-TB6612MotorShield motor;
+//TB6612MotorShield motor;
 LineSensor lineSensor(A1);
 
 void setup() {
 
-  motor.setSpeeds(100,100);
+  //motor.setSpeeds(100,100);
 
   Serial.begin(115200);
 
