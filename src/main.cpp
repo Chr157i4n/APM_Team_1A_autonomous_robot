@@ -5,6 +5,10 @@
 TB6612MotorShield motor;
 LineSensor lineSensor(A7);
 
+int baseSpeed = 100;
+int sensorValue = 0;
+int normalizedsensorValue = 0;
+
 void setup() {
 
   Serial.begin(9600);
@@ -12,20 +16,27 @@ void setup() {
   digitalWrite(12,HIGH);
 
   motor.setSpeeds(0,0);           //Ruckbewegung der Motoren am Anfang fällt hiermit weg.
-  delay(2000);
-  motor.setSpeeds(100,-100);
-  delay(2000);
-  motor.setSpeeds(0,0);
-  delay(2000);
-  motor.setSpeeds(-100,100);
-  delay(2000);
-  motor.setSpeeds(0,0);
+  delay(1000);
+
 
 }
 
 void loop() {
 
   //Serial.println("test");
-  Serial.println(lineSensor.getValue());
+
+  sensorValue = lineSensor.getValue();
+  normalizedsensorValue = (sensorValue - 512) * 0.1;
+
+  Serial.print("raw: ");
+  Serial.print(sensorValue);
+
+  Serial.print("lS: ");
+  Serial.print(baseSpeed+normalizedsensorValue);
+
+  Serial.print("rS: ");
+  Serial.println(baseSpeed-normalizedsensorValue);
+
+  motor.setSpeeds(baseSpeed+normalizedsensorValue,-baseSpeed-normalizedsensorValue); 
 
 }
