@@ -14,7 +14,7 @@
 TB6612MotorShield motor;
 LineSensor lineSensor(PIN_LINESENSOR_SENSE);
 
-unsigned int timeStart = 0, timeCurrent = 0;
+unsigned long timeStart = 0, timeCurrent = 0;
 
 //variables for driving
 int baseSpeed = 200;
@@ -25,54 +25,73 @@ double Kp=0.1, Ki=0, Kd=0;
 PID lineSensorPID(&lineSensorValue, &lineSensorPIDValue, &Setpoint, Kp, Ki, Kd, DIRECT);
 
 
+/*
+* this function inverts the motor speed of the second motor
+* so that both wheels drive in the same direction when beeing set with the same value
+*/
 void setMotorSpeeds(int m1Speed, int m2Speed){
   
   motor.setSpeeds(m1Speed, -m2Speed);
 
 }
 
+
+/*
+* this function is called once when the arduino starts
+*
+*/
 void setup() {
 
-  lineSensorPID.SetOutputLimits(-100,100);
+  motor.setSpeeds(0,0);                         // Ruckbewegung der Motoren am Anfang fällt hiermit weg.
+  motor.setBreak(true);
+
+  lineSensorPID.SetOutputLimits(-100,100);      // standard of the limits is (0, 255) and we need negative values
   lineSensorPID.SetMode(AUTOMATIC);
 
   Serial.begin(BAUD_RATE);
   pinMode(PIN_LINESENSOR_POWER, OUTPUT);
   digitalWrite(PIN_LINESENSOR_POWER, HIGH);
 
-  motor.setSpeeds(0,0);           //Ruckbewegung der Motoren am Anfang fällt hiermit weg.
-  delay(DURATION_INITIAL_WAIT);
+  delay(DURATION_INITIAL_WAIT);                 // Wait a couple of seconds to start
 
-  timeStart = millis();
+  motor.setBreak(false);
+  timeStart = millis();                         // save the current time as starting time
 }
 
+
+/*
+* this function is running in a loop while the arduino is running
+*
+*/
 void loop() {
   
-  timeCurrent = millis();
+  timeCurrent = millis();                                     // get the current time
 
-  if(timeCurrent < timeStart + DURATION_DRIVE){
-  lineSensorValue = lineSensor.getValue();
-  //normalizedsensorValue = (sensorValue - 512) * 0.1;
+  if(timeCurrent < timeStart + DURATION_DRIVE){               // only drive for a defined amount of time
+    
+    lineSensorValue = lineSensor.getValue();                    // reading the line sensor (phototransistor) value
+    //normalizedsensorValue = (sensorValue - 512) * 0.1;
 
-  lineSensorPID.Compute();
+    lineSensorPID.Compute();                                    // compute the output value for the steering based on the line sensor value (part of the PID libary)
 
-  Serial.print(" raw: ");
-  Serial.print(lineSensorValue);
+    Serial.print(" raw: ");
+    Serial.print(lineSensorValue);
+    Serial.print(" pid: ");
+    Serial.print(lineSensorPIDValue);
+    Serial.print(" lS: ");
+    Serial.print(baseSpeed+lineSensorPIDValue);
+    Serial.print(" rS: ");
+    Serial.println(baseSpeed-lineSensorPIDValue);
 
-  Serial.print(" pid: ");
-  Serial.print(lineSensorPIDValue);
 
-  Serial.print(" lS: ");
-  Serial.print(baseSpeed+lineSensorPIDValue);
-
-  Serial.print(" rS: ");
-  Serial.println(baseSpeed-lineSensorPIDValue);
-
-  setMotorSpeeds(baseSpeed+lineSensorPIDValue, baseSpeed-lineSensorPIDValue);
+    setMotorSpeeds(baseSpeed+lineSensorPIDValue, baseSpeed-lineSensorPIDValue);     // set the actual motor speed
 
   } else {
+    
     setMotorSpeeds(0, 0);
+    motor.setBreak(true);
     Serial.println("Destination reached");
+    
   }
 
 }
