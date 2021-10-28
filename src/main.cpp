@@ -16,13 +16,17 @@ LineSensor lineSensor(PIN_LINESENSOR_SENSE);
 
 unsigned long timeStart = 0, timeCurrent = 0;
 
-double lineSensorMax = 560, lineSensorMin = 450;
 
 //variables for driving
 int baseSpeed = 100;
+double lineSensorMax = 560, lineSensorMin = 450;
 double Setpoint = 512, lineSensorValue = 0, lineSensorPIDValue = 0;
 
 // PID for steering
+// Kp is the proportional factor the PID controller. it the main value to correct an offset of the measured value.
+// Ki is the integral factor the PID controller. Ki is used to correct systematic errors that would cause a constant offset, like a slower motor on one side.
+// Kd is the differential factor the PID controller. With Kd the controller can react to fast changes like a sharp curve.
+// this needs calibration
 double Kp=0.6, Ki=0.1, Kd=0.2;
 PID lineSensorPID(&lineSensorValue, &lineSensorPIDValue, &Setpoint, Kp, Ki, Kd, DIRECT);
 
@@ -44,6 +48,9 @@ void setMotorSpeeds(int m1Speed, int m2Speed){
 */
 void setup() {
 
+  // the Setpoint is the value where the measured input value of the sensor should be
+  // and this should be the middle of the max (white) and the min (black) value of the sensor.
+  // we still need to calibrate this 
   Setpoint = (lineSensorMax + lineSensorMin)*0.5;
 
   motor.setSpeeds(0,0);                         // Ruckbewegung der Motoren am Anfang fällt hiermit weg.
@@ -88,6 +95,7 @@ void loop() {
     Serial.println(baseSpeed-lineSensorPIDValue);
 
 
+    // if you comment this out, the motor does not start to move
     setMotorSpeeds(baseSpeed+lineSensorPIDValue, baseSpeed-lineSensorPIDValue);     // set the actual motor speed
 
   } else {
@@ -97,8 +105,9 @@ void loop() {
     //Serial.println("Destination reached");
 
     lineSensorValue = lineSensor.getValue();                    // reading the line sensor (phototransistor) value
-    //normalizedsensorValue = (sensorValue - 512) * 0.1;
 
+
+    //still outputing the pid values after finished driving for testing purposes
     lineSensorPID.Compute();                                    // compute the output value for the steering based on the line sensor value (part of the PID libary)
     Serial.print(" set: ");
     Serial.print(Setpoint);
