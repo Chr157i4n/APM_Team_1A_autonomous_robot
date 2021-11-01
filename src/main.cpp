@@ -9,6 +9,7 @@
 #define PIN_LINESENSOR_POWER 12
 #define DURATION_INITIAL_WAIT 1000 //ms
 #define DURATION_DRIVE 20000 //ms
+#define PRINT_DEBUG 0
 
 
 TB6612MotorShield motor;
@@ -48,6 +49,9 @@ void setMotorSpeeds(int m1Speed, int m2Speed){
 */
 void setup() {
 
+  Serial.begin(BAUD_RATE);
+  Serial.println("setup");
+
   // the Setpoint is the value where the measured input value of the sensor should be
   // and this should be the middle of the max (white) and the min (black) value of the sensor.
   // we still need to calibrate this 
@@ -59,7 +63,6 @@ void setup() {
   lineSensorPID.SetOutputLimits(-50,50);      // standard of the limits is (0, 255) and we need negative values
   lineSensorPID.SetMode(AUTOMATIC);
 
-  Serial.begin(BAUD_RATE);
   pinMode(PIN_LINESENSOR_POWER, OUTPUT);
   digitalWrite(PIN_LINESENSOR_POWER, HIGH);
 
@@ -67,6 +70,8 @@ void setup() {
 
   motor.setBreak(false);
   timeStart = millis();                         // save the current time as starting time
+
+  Serial.println("setup finished");
 }
 
 
@@ -83,16 +88,10 @@ void loop() {
     //normalizedsensorValue = (sensorValue - 512) * 0.1;
 
     lineSensorPID.Compute();                                    // compute the output value for the steering based on the line sensor value (part of the PID libary)
-    Serial.print(" set: ");
-    Serial.print(Setpoint);
-    Serial.print(" raw: ");
-    Serial.print(lineSensorValue);
-    Serial.print(" pid: ");
-    Serial.print(lineSensorPIDValue);
-    Serial.print(" lS: ");
-    Serial.print(baseSpeed+lineSensorPIDValue);
-    Serial.print(" rS: ");
-    Serial.println(baseSpeed-lineSensorPIDValue);
+
+#if PRINT_DEBUG == 1
+    Serial.println((String)"set: "+Setpoint+" raw: "+lineSensorValue+" pid: "+lineSensorPIDValue+" lS: "+(baseSpeed+lineSensorPIDValue)+" rS: "+(baseSpeed-lineSensorPIDValue));
+#endif
 
 
     // if you comment this out, the motor does not start to move
@@ -106,19 +105,13 @@ void loop() {
 
     lineSensorValue = lineSensor.getValue();                    // reading the line sensor (phototransistor) value
 
-
-    //still outputing the pid values after finished driving for testing purposes
     lineSensorPID.Compute();                                    // compute the output value for the steering based on the line sensor value (part of the PID libary)
-    Serial.print(" set: ");
-    Serial.print(Setpoint);
-    Serial.print(" raw: ");
-    Serial.print(lineSensorValue);
-    Serial.print(" pid: ");
-    Serial.print(lineSensorPIDValue);
-    Serial.print(" lS: ");
-    Serial.print(baseSpeed+lineSensorPIDValue);
-    Serial.print(" rS: ");
-    Serial.println(baseSpeed-lineSensorPIDValue);
+
+#if PRINT_DEBUG == 1
+    //still outputing the pid values after finished driving for testing purposes
+    Serial.println((String)"set: "+Setpoint+" raw: "+lineSensorValue+" pid: "+lineSensorPIDValue+" lS: "+(baseSpeed+lineSensorPIDValue)+" rS: "+(baseSpeed-lineSensorPIDValue));
+#endif
+
     
   }
 
