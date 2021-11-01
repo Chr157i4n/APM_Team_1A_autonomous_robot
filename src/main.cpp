@@ -9,6 +9,7 @@
 #define PIN_LINESENSOR_POWER 12
 #define DURATION_INITIAL_WAIT 1000 //ms
 #define DURATION_DRIVE 20000 //ms
+#define PRINT_DEBUG 0
 
 
 TB6612MotorShield motor;
@@ -82,6 +83,7 @@ void loop() {
     lineSensorValue = lineSensor.getValue();                    // reading the line sensor (phototransistor) value
     //normalizedsensorValue = (sensorValue - 512) * 0.1;
 
+#if PRINT_DEBUG == 1
     lineSensorPID.Compute();                                    // compute the output value for the steering based on the line sensor value (part of the PID libary)
     Serial.print(" set: ");
     Serial.print(Setpoint);
@@ -93,6 +95,7 @@ void loop() {
     Serial.print(baseSpeed+lineSensorPIDValue);
     Serial.print(" rS: ");
     Serial.println(baseSpeed-lineSensorPIDValue);
+#endif
 
 
     // if you comment this out, the motor does not start to move
@@ -107,6 +110,7 @@ void loop() {
     lineSensorValue = lineSensor.getValue();                    // reading the line sensor (phototransistor) value
 
 
+#if PRINT_DEBUG == 1
     //still outputing the pid values after finished driving for testing purposes
     lineSensorPID.Compute();                                    // compute the output value for the steering based on the line sensor value (part of the PID libary)
     Serial.print(" set: ");
@@ -119,6 +123,8 @@ void loop() {
     Serial.print(baseSpeed+lineSensorPIDValue);
     Serial.print(" rS: ");
     Serial.println(baseSpeed-lineSensorPIDValue);
+#endif
+
     
   }
 
