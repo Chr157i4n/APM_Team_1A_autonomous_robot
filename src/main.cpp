@@ -71,7 +71,7 @@ void setup() {
   motor.setBreak(false);
   timeStart = millis();                         // save the current time as starting time
 
-    Serial.println("setup finished");
+  Serial.println("setup finished");
 }
 
 
