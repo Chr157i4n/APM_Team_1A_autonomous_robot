@@ -18,9 +18,23 @@ LineSensor lineSensor(PIN_LINESENSOR_SENSE);
 unsigned long timeStart = 0, timeCurrent = 0;
 
 
+// Sensor values in T1137
+// lights out - black ground  24
+// lights on - black ground 25-26
+
+// lights out - malerkrepp 43-44
+// lights on - malerkrepp 49
+
+// lights out - white electrical tape 79-80
+// lights on - white electrical tape 88
+
+// lights out - black electrical tape 16
+// lights on - black electrical tape 18
+
 //variables for driving
 int baseSpeed = 100;
-double lineSensorMax = 560, lineSensorMin = 450;
+double lineSensorMax = 80, lineSensorMin = 24;  // black ground - white eletrical tape
+//double lineSensorMax = 44, lineSensorMin = 24;  // black ground - malerkrepp
 double Setpoint = 512, lineSensorValue = 0, lineSensorPIDValue = 0;
 
 // PID for steering
@@ -28,7 +42,8 @@ double Setpoint = 512, lineSensorValue = 0, lineSensorPIDValue = 0;
 // Ki is the integral factor the PID controller. Ki is used to correct systematic errors that would cause a constant offset, like a slower motor on one side.
 // Kd is the differential factor the PID controller. With Kd the controller can react to fast changes like a sharp curve.
 // this needs calibration
-double Kp=0.6, Ki=0.1, Kd=0.2;
+//double Kp=0.5, Ki=0.1, Kd=0.2; //worked
+double Kp=0.6, Ki=0.1, Kd=0.02; //worked
 PID lineSensorPID(&lineSensorValue, &lineSensorPIDValue, &Setpoint, Kp, Ki, Kd, DIRECT);
 
 
