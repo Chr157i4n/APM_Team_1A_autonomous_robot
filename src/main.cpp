@@ -1,13 +1,18 @@
 #include <Arduino.h>
 #include <PID_v1.h>
+#include <Ultrasonic.h>
 
 #include "TB6612MotorShield.h"
 #include "LineSensor.h"
 
 #define BAUD_RATE 9600
 
+#define ULTRASONIC_SENSOR_TRIGGER_PIN 12
+#define ULTRASONIC_SENSOR_RECEIVER_PIN 13
+
 
 TB6612MotorShield motor;
+Ultrasonic ultrasonic(ULTRASONIC_SENSOR_TRIGGER_PIN, ULTRASONIC_SENSOR_RECEIVER_PIN);
 
 /*
 * this function is called once when the arduino starts
@@ -32,6 +37,8 @@ void setup() {
 */
 void loop() {
   
- 
+  int distance = ultrasonic.read();
+
+  Serial.println(distance);
 
 }
