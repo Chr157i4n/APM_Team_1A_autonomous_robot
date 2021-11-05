@@ -8,11 +8,11 @@
 #define BAUD_RATE 9600
 
 #define ULTRASONIC_SENSOR_TRIGGER_PIN 12
-#define ULTRASONIC_SENSOR_RECEIVER_PIN 13
+#define ULTRASONIC_SENSOR_ECHO_PIN 13
 
 
 TB6612MotorShield motor;
-Ultrasonic ultrasonic(ULTRASONIC_SENSOR_TRIGGER_PIN, ULTRASONIC_SENSOR_RECEIVER_PIN);
+Ultrasonic ultrasonic(ULTRASONIC_SENSOR_TRIGGER_PIN, ULTRASONIC_SENSOR_ECHO_PIN);
 
 /*
 * this function is called once when the arduino starts
