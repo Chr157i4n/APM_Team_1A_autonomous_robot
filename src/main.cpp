@@ -37,8 +37,12 @@ void setup() {
 */
 void loop() {
   
+  int time1 = millis();
+
   int distance = ultrasonic.read();
 
-  Serial.println(distance);
+  int time2 = millis();
+
+  Serial.println((String) distance+" cm. it took "+(time2-time1)+" ms");
 
 }
