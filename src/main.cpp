@@ -12,7 +12,7 @@
 #define PIN_ULTRASONIC_SENSOR_ECHO 9
 
 #define DURATION_INITIAL_WAIT 1000 //ms
-#define DURATION_DRIVE 20000 //ms
+#define DURATION_DRIVE_TIMEOUT 20000 //ms
 
 #define PRINT_DEBUG 0
 
@@ -21,7 +21,12 @@ TB6612MotorShield motor;
 LineSensor lineSensor(PIN_LINESENSOR_SENSE);
 Ultrasonic ultrasonic(PIN_ULTRASONIC_SENSOR_TRIGGER, PIN_ULTRASONIC_SENSOR_ECHO);
 
-unsigned long timeStart = 0, timeCurrent = 0;
+unsigned long timeStart = 0, timeCurrent = 0, timeElasped = 0;
+int distance = 0;
+
+unsigned short state = 0;
+// state 0 = drive
+// state 1 = finished, stop driving
 
 
 // Sensor values in T1137
@@ -98,34 +103,42 @@ void setup() {
 *
 */
 void loop() {
+
+  distance = ultrasonic.read();
+  timeCurrent = millis(); // get the current time
+  timeElasped = timeCurrent - timeStart;
+
+  if(state==0 && (distance < 20 || timeElasped>DURATION_DRIVE_TIMEOUT)){
+    // if the measured distance of the ultrasonic sensor is below 20cm the robot should go into state 1 (stop)
+    state = 1;
+    Serial.println("destination or timeout reached");
+  } 
+
   
-  timeCurrent = millis();                                     // get the current time
-  if(timeCurrent < timeStart + DURATION_DRIVE){               // only drive for a defined amount of time
+  if(state == 0){               // only drive when state == 0
     
-    lineSensorValue = lineSensor.getValue();                    // reading the line sensor (phototransistor) value
+    lineSensorValue = lineSensor.getValue();  // reading the line sensor (phototransistor) value
     //normalizedsensorValue = (sensorValue - 512) * 0.1;
 
-    lineSensorPID.Compute();                                    // compute the output value for the steering based on the line sensor value (part of the PID libary)
+    lineSensorPID.Compute();  // compute the output value for the steering based on the line sensor value (part of the PID libary)
 
 #if PRINT_DEBUG == 1
     Serial.println((String)"set: "+Setpoint+" raw: "+lineSensorValue+" pid: "+lineSensorPIDValue+" lS: "+(baseSpeed+lineSensorPIDValue)+" rS: "+(baseSpeed-lineSensorPIDValue));
 #endif
 
-
     // if you comment this out, the motor does not start to move
-    setMotorSpeeds(baseSpeed+lineSensorPIDValue, baseSpeed-lineSensorPIDValue);     // set the actual motor speed
+    setMotorSpeeds(baseSpeed+lineSensorPIDValue, baseSpeed-lineSensorPIDValue); // set the actual motor speed
 
   } else {
     
     setMotorSpeeds(0, 0);
     motor.setBreak(true);
-    //Serial.println("Destination reached");
 
+#if PRINT_DEBUG == 1
     lineSensorValue = lineSensor.getValue();                    // reading the line sensor (phototransistor) value
 
     lineSensorPID.Compute();                                    // compute the output value for the steering based on the line sensor value (part of the PID libary)
 
-#if PRINT_DEBUG == 1
     //still outputing the pid values after finished driving for testing purposes
     Serial.println((String)"set: "+Setpoint+" raw: "+lineSensorValue+" pid: "+lineSensorPIDValue+" lS: "+(baseSpeed+lineSensorPIDValue)+" rS: "+(baseSpeed-lineSensorPIDValue));
 #endif
