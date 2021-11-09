@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <PID_v1.h>
+#include <Ultrasonic.h>
 
 #include "TB6612MotorShield.h"
 #include "LineSensor.h"
