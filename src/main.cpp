@@ -6,15 +6,20 @@
 #include "LineSensor.h"
 
 #define BAUD_RATE 9600
+
 #define PIN_LINESENSOR_SENSE A7
-#define PIN_LINESENSOR_POWER 12
+#define PIN_ULTRASONIC_SENSOR_TRIGGER 12
+#define PIN_ULTRASONIC_SENSOR_ECHO 9
+
 #define DURATION_INITIAL_WAIT 1000 //ms
 #define DURATION_DRIVE 20000 //ms
+
 #define PRINT_DEBUG 0
 
 
 TB6612MotorShield motor;
 LineSensor lineSensor(PIN_LINESENSOR_SENSE);
+Ultrasonic ultrasonic(PIN_ULTRASONIC_SENSOR_TRIGGER, PIN_ULTRASONIC_SENSOR_ECHO);
 
 unsigned long timeStart = 0, timeCurrent = 0;
 
@@ -78,9 +83,6 @@ void setup() {
 
   lineSensorPID.SetOutputLimits(-50,50);      // standard of the limits is (0, 255) and we need negative values
   lineSensorPID.SetMode(AUTOMATIC);
-
-  pinMode(PIN_LINESENSOR_POWER, OUTPUT);
-  digitalWrite(PIN_LINESENSOR_POWER, HIGH);
 
   delay(DURATION_INITIAL_WAIT);                 // Wait a couple of seconds to start
 
