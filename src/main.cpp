@@ -9,11 +9,14 @@
 #define BAUD_RATE 9600
 
 #define PIN_LINESENSOR_SENSE A7
-#define PIN_ULTRASONIC_SENSOR_TRIGGER 12
-#define PIN_ULTRASONIC_SENSOR_ECHO 9
+#define PIN_ULTRASONIC_SecondRobot_SENSOR_TRIGGER 12
+#define PIN_ULTRASONIC_SecondRobot_SENSOR_ECHO 9
+#define PIN_ULTRASONIC_Baton_SENSOR_TRIGGER 2 //todo: needs to be changed
+#define PIN_ULTRASONIC_Baton_SENSOR_ECHO 3 //todo: needs to be changed
 #define PIN_SERVO 1 //todo: needs to be changed
 
 #define DURATION_INITIAL_WAIT 1000 //ms
+#define DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED 5000 //ms
 #define DURATION_DRIVE_TIMEOUT 20000 //ms
 
 #define PRINT_DEBUG 0
@@ -21,15 +24,17 @@
 
 TB6612MotorShield motor;
 LineSensor lineSensor(PIN_LINESENSOR_SENSE);
-Ultrasonic ultrasonic(PIN_ULTRASONIC_SENSOR_TRIGGER, PIN_ULTRASONIC_SENSOR_ECHO);
+Ultrasonic ultrasonicSecondRobot(PIN_ULTRASONIC_SecondRobot_SENSOR_TRIGGER, PIN_ULTRASONIC_SecondRobot_SENSOR_ECHO);
+Ultrasonic ultrasonicBaton(PIN_ULTRASONIC_Baton_SENSOR_TRIGGER, PIN_ULTRASONIC_Baton_SENSOR_ECHO);
 BatonMechanism batonMechanism(PIN_SERVO);
 
 unsigned long timeStart = 0, timeCurrent = 0, timeElasped = 0;
-int distance = 0;
+int distanceSecondRobot = 0, distanceBaton = 0;
 
 unsigned short state = 0;
-// state 0 = drive
-// state 1 = finished, stop driving
+// state 0 = wait for baton
+// state 1 = drive
+// state 2 = finished, stop driving
 
 
 // Sensor values in T1137
@@ -107,19 +112,29 @@ void setup() {
 */
 void loop() {
 
-  distance = ultrasonic.read();
   timeCurrent = millis(); // get the current time
   timeElasped = timeCurrent - timeStart;
 
-  if(state==0 && (distance < 20 || timeElasped>DURATION_DRIVE_TIMEOUT)){
-    // if the measured distance of the ultrasonic sensor is below 20cm the robot should go into state 1 (stop)
-    state = 1;
-    Serial.println("destination or timeout reached");
-  } 
+  if(state == 0){
+    distanceBaton = ultrasonicSecondRobot.read(); //todo: change to second sensor
 
-  
-  if(state == 0){               // only drive when state == 0
-    
+    if(distanceSecondRobot < 10){ 
+      // if the measured distance of the ultrasonic sensor is below 10cm the robot should go into state 1 (sstart driving)
+      state = 1;
+      Serial.println("robot should start driving in 5 seconds");
+      delay(DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED);
+      timeStart = timeCurrent;
+    }
+
+  } else if(state == 1){
+    distanceSecondRobot = ultrasonicSecondRobot.read();
+
+    if(distanceSecondRobot < 20 || timeElasped > DURATION_DRIVE_TIMEOUT){
+      // if the measured distance of the ultrasonic sensor is below 20cm the robot should go into state 2 (stop)
+      state = 2;
+      Serial.println("destination or timeout reached");
+    } 
+
     lineSensorValue = lineSensor.getValue();  // reading the line sensor (phototransistor) value
     //normalizedsensorValue = (sensorValue - 512) * 0.1;
 
@@ -132,7 +147,7 @@ void loop() {
     // if you comment this out, the motor does not start to move
     setMotorSpeeds(baseSpeed+lineSensorPIDValue, baseSpeed-lineSensorPIDValue); // set the actual motor speed
 
-  } else {
+  } else if(state == 2) {
     //second robot reached
 
     setMotorSpeeds(0, 0);
