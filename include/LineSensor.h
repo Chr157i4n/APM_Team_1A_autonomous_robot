@@ -15,9 +15,9 @@ class LineSensor
     * this function returns the current measured value of the sensor
     *
     */
-    static int getValue();
+    int getValue();
     
     
   private:
-    static int _pin_sense;
+    int _pin_sense = A0;
 };
