@@ -4,12 +4,14 @@
 
 #include "TB6612MotorShield.h"
 #include "LineSensor.h"
+#include "BatonMechanism.h"
 
 #define BAUD_RATE 9600
 
 #define PIN_LINESENSOR_SENSE A7
 #define PIN_ULTRASONIC_SENSOR_TRIGGER 12
 #define PIN_ULTRASONIC_SENSOR_ECHO 9
+#define PIN_SERVO 1 //todo: needs to be changed
 
 #define DURATION_INITIAL_WAIT 1000 //ms
 #define DURATION_DRIVE_TIMEOUT 20000 //ms
@@ -20,6 +22,7 @@
 TB6612MotorShield motor;
 LineSensor lineSensor(PIN_LINESENSOR_SENSE);
 Ultrasonic ultrasonic(PIN_ULTRASONIC_SENSOR_TRIGGER, PIN_ULTRASONIC_SENSOR_ECHO);
+BatonMechanism batonMechanism(PIN_SERVO);
 
 unsigned long timeStart = 0, timeCurrent = 0, timeElasped = 0;
 int distance = 0;
@@ -130,9 +133,11 @@ void loop() {
     setMotorSpeeds(baseSpeed+lineSensorPIDValue, baseSpeed-lineSensorPIDValue); // set the actual motor speed
 
   } else {
-    
+    //second robot reached
+
     setMotorSpeeds(0, 0);
     motor.setBreak(true);
+    batonMechanism.unload();
 
 #if PRINT_DEBUG == 1
     lineSensorValue = lineSensor.getValue();                    // reading the line sensor (phototransistor) value
