@@ -3,33 +3,34 @@
 #include <Ultrasonic.h>
 
 #include "TB6612MotorShield.h"
-#include "LineSensor.h"
+#include "FotoTransistorSensor.h"
 #include "BatonMechanism.h"
 
 #define BAUD_RATE 9600
 
 #define PIN_LINESENSOR_SENSE A7
-#define PIN_ULTRASONIC_SecondRobot_SENSOR_TRIGGER 12
-#define PIN_ULTRASONIC_SecondRobot_SENSOR_ECHO 9
-#define PIN_ULTRASONIC_Baton_SENSOR_TRIGGER 2 //todo: needs to be changed
-#define PIN_ULTRASONIC_Baton_SENSOR_ECHO 3 //todo: needs to be changed
+#define PIN_BATONSENSOR_SENSE A6 // todo: needs to be changed
+#define PIN_ULTRASONIC_SENSOR_TRIGGER 12
+#define PIN_ULTRASONIC_SENSOR_ECHO 9
 #define PIN_SERVO 1 //todo: needs to be changed
 
 #define DURATION_INITIAL_WAIT 1000 //ms
 #define DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED 5000 //ms
 #define DURATION_DRIVE_TIMEOUT 20000 //ms
 
+#define THRESHOLD_BATONSENSOR_DETECT 20 // todo: needds to be changed
+
 #define PRINT_DEBUG 0
 
 
 TB6612MotorShield motor;
-LineSensor lineSensor(PIN_LINESENSOR_SENSE);
-Ultrasonic ultrasonicSecondRobot(PIN_ULTRASONIC_SecondRobot_SENSOR_TRIGGER, PIN_ULTRASONIC_SecondRobot_SENSOR_ECHO);
-Ultrasonic ultrasonicBaton(PIN_ULTRASONIC_Baton_SENSOR_TRIGGER, PIN_ULTRASONIC_Baton_SENSOR_ECHO);
+FotoTransistorSensor lineSensor(PIN_LINESENSOR_SENSE);
+FotoTransistorSensor batonSensor(PIN_BATONSENSOR_SENSE);
+Ultrasonic ultrasonic(PIN_ULTRASONIC_SENSOR_TRIGGER, PIN_ULTRASONIC_SENSOR_ECHO);
 BatonMechanism batonMechanism(PIN_SERVO);
 
 unsigned long timeStart = 0, timeCurrent = 0, timeElasped = 0;
-int distanceSecondRobot = 0, distanceBaton = 0;
+int distanceSecondRobot = 0, batonSensorValue = 0;
 
 unsigned short state = 0;
 // state 0 = wait for baton
@@ -97,6 +98,8 @@ void setup() {
   lineSensorPID.SetOutputLimits(-50,50);      // standard of the limits is (0, 255) and we need negative values
   lineSensorPID.SetMode(AUTOMATIC);
 
+  batonMechanism.tiltUp();
+
   delay(DURATION_INITIAL_WAIT);                 // Wait a couple of seconds to start
 
   motor.setBreak(false);
@@ -116,10 +119,10 @@ void loop() {
   timeElasped = timeCurrent - timeStart;
 
   if(state == 0){
-    distanceBaton = ultrasonicSecondRobot.read(); //todo: change to second sensor
+    batonSensorValue = batonSensor.getValue(); //todo: change to second sensor
 
-    if(distanceSecondRobot < 10){ 
-      // if the measured distance of the ultrasonic sensor is below 10cm the robot should go into state 1 (sstart driving)
+    if(batonSensorValue < THRESHOLD_BATONSENSOR_DETECT){ 
+      //if the brightness is below the THRESHOLD_BATONSENSOR_DETECT the robot goes into state 1
       state = 1;
       Serial.println("robot should start driving in 5 seconds");
       delay(DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED);
@@ -127,7 +130,7 @@ void loop() {
     }
 
   } else if(state == 1){
-    distanceSecondRobot = ultrasonicSecondRobot.read();
+    distanceSecondRobot = ultrasonic.read();
 
     if(distanceSecondRobot < 20 || timeElasped > DURATION_DRIVE_TIMEOUT){
       // if the measured distance of the ultrasonic sensor is below 20cm the robot should go into state 2 (stop)
@@ -152,7 +155,10 @@ void loop() {
 
     setMotorSpeeds(0, 0);
     motor.setBreak(true);
-    batonMechanism.unload();
+    batonMechanism.tiltDown();
+    state = 3;
+
+  } else {
 
 #if PRINT_DEBUG == 1
     lineSensorValue = lineSensor.getValue();                    // reading the line sensor (phototransistor) value
@@ -162,6 +168,8 @@ void loop() {
     //still outputing the pid values after finished driving for testing purposes
     Serial.println((String)"set: "+Setpoint+" raw: "+lineSensorValue+" pid: "+lineSensorPIDValue+" lS: "+(baseSpeed+lineSensorPIDValue)+" rS: "+(baseSpeed-lineSensorPIDValue));
 #endif
+
+  }
 
     
   }
