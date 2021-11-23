@@ -11,8 +11,8 @@
 #define PIN_LINESENSOR_SENSE A7
 #define PIN_BATONSENSOR_SENSE A6 // todo: needs to be changed
 #define PIN_ULTRASONIC_SENSOR_TRIGGER 12
-#define PIN_ULTRASONIC_SENSOR_ECHO 9
-#define PIN_SERVO 1 //todo: needs to be changed
+#define PIN_ULTRASONIC_SENSOR_ECHO 8
+#define PIN_SERVO 9 //todo: needs to be changed
 
 #define DURATION_INITIAL_WAIT 1000 //ms
 #define DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED 5000 //ms
