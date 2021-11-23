@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-class LineSensor 
+class FotoTransistorSensor 
 {
   public:
 
@@ -8,7 +8,7 @@ class LineSensor
     * constructor of the class
     * the number of the pin is needed as parameter
     */
-    LineSensor(int pin_sense);
+    FotoTransistorSensor(int pin_sense);
 
 
     /*

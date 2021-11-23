@@ -8,7 +8,7 @@ BatonMechanism::BatonMechanism(int pin_servo){
 }
 
 void BatonMechanism::unload(){
-    tiltUp();
+    tiltDown();
 }
 
 void BatonMechanism::tiltDown(){
