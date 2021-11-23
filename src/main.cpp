@@ -27,7 +27,7 @@ void setup() {
 */
 void loop() {
 
-  int sensorValue = analogRead(A0);
+  int sensorValue = analogRead(A7);
 
   Serial.println((String) "sensorValue: "+sensorValue);
 
