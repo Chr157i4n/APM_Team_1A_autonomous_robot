@@ -18,9 +18,9 @@
 #define DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED 5000 //ms
 #define DURATION_DRIVE_TIMEOUT 20000 //ms
 
-#define THRESHOLD_BATONSENSOR_DETECT 20 // todo: needds to be changed
+#define THRESHOLD_BATONSENSOR_DETECT 20 // todo: needs to be changed
 
-#define PRINT_DEBUG 0
+#define PRINT_DEBUG 1
 
 
 TB6612MotorShield motor;
@@ -120,6 +120,9 @@ void loop() {
 
   if(state == 0){
     batonSensorValue = batonSensor.getValue(); //todo: change to second sensor
+#if PRINT_DEBUG == 1
+    Serial.println((String)"batonSensorValue: "+batonSensorValue);
+#endif
 
     if(batonSensorValue < THRESHOLD_BATONSENSOR_DETECT){ 
       //if the brightness is below the THRESHOLD_BATONSENSOR_DETECT the robot goes into state 1
