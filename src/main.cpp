@@ -20,7 +20,7 @@
 
 #define THRESHOLD_BATONSENSOR_DETECT 50 // todo: needs to be changed
 
-#define PRINT_DEBUG 1
+#define PRINT_DEBUG 0
 
 
 TB6612MotorShield motor;
