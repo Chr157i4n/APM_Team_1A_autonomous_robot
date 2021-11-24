@@ -8,17 +8,17 @@
 
 #define BAUD_RATE 9600
 
-#define PIN_LINESENSOR_SENSE A7
-#define PIN_BATONSENSOR_SENSE A6 // todo: needs to be changed
+#define PIN_LINESENSOR_SENSE A6
+#define PIN_BATONSENSOR_SENSE A7 // todo: needs to be changed
 #define PIN_ULTRASONIC_SENSOR_TRIGGER 12
-#define PIN_ULTRASONIC_SENSOR_ECHO 9
-#define PIN_SERVO 1 //todo: needs to be changed
+#define PIN_ULTRASONIC_SENSOR_ECHO 8
+#define PIN_SERVO 9 //Servo has to be on Pin 9, because Pin 9 is able to do PWM
 
 #define DURATION_INITIAL_WAIT 1000 //ms
-#define DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED 5000 //ms
+#define DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED 2000 //ms
 #define DURATION_DRIVE_TIMEOUT 20000 //ms
 
-#define THRESHOLD_BATONSENSOR_DETECT 20 // todo: needds to be changed
+#define THRESHOLD_BATONSENSOR_DETECT 50 // todo: needs to be changed
 
 #define PRINT_DEBUG 0
 
@@ -120,17 +120,21 @@ void loop() {
 
   if(state == 0){
     batonSensorValue = batonSensor.getValue(); //todo: change to second sensor
+#if PRINT_DEBUG == 1
+    Serial.println((String)"batonSensorValue: "+batonSensorValue);
+#endif
 
     if(batonSensorValue < THRESHOLD_BATONSENSOR_DETECT){ 
       //if the brightness is below the THRESHOLD_BATONSENSOR_DETECT the robot goes into state 1
       state = 1;
-      Serial.println("robot should start driving in 5 seconds");
+      Serial.println("robot should start driving in 2 seconds");
       delay(DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED);
       timeStart = timeCurrent;
     }
 
   } else if(state == 1){
     distanceSecondRobot = ultrasonic.read();
+    Serial.println("Distance: "+distanceSecondRobot);
 
     if(distanceSecondRobot < 20 || timeElasped > DURATION_DRIVE_TIMEOUT){
       // if the measured distance of the ultrasonic sensor is below 20cm the robot should go into state 2 (stop)
@@ -169,9 +173,6 @@ void loop() {
     Serial.println((String)"set: "+Setpoint+" raw: "+lineSensorValue+" pid: "+lineSensorPIDValue+" lS: "+(baseSpeed+lineSensorPIDValue)+" rS: "+(baseSpeed-lineSensorPIDValue));
 #endif
 
-  }
-
-    
   }
 
 }
