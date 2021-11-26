@@ -12,6 +12,8 @@
 
 #define PIN_SERVO 9 //todo: needs to be changed
 
+int currentServoAngle = 0;
+
 
 Servo servo;
 
@@ -22,7 +24,31 @@ void setup() {
   Serial.println("setup");
   servo.attach(PIN_SERVO);
 
+  servo.write(20);
+  currentServoAngle = 20;
+
   Serial.println("setup finished");
+}
+
+void driveServo(int targetAngle, float speed){
+
+  if(targetAngle>currentServoAngle){
+  
+    while(currentServoAngle<=targetAngle){
+      currentServoAngle++;
+      servo.write(currentServoAngle);
+      delay(10/speed);
+    }
+
+  }else{
+
+    while(currentServoAngle>=targetAngle){
+      currentServoAngle--;
+      servo.write(currentServoAngle);
+      delay(10/speed);
+    }
+
+  }
 }
 
 
@@ -32,13 +58,13 @@ void setup() {
 */
 void loop() {
 
-  Serial.println((String) "Driving Servo to: 0°");
-  servo.write(0);
+  Serial.println((String) "Driving Servo to: 20°");
+  driveServo(20,1);
 
   delay(2000);
 
   Serial.println((String) "Driving Servo to: 180°");
-  servo.write(180);
+  driveServo(180,1);
 
   delay(2000);
 }
