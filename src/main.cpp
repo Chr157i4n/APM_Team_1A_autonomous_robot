@@ -10,7 +10,7 @@
 #define BAUD_RATE 9600
 
 
-#define PIN_SERVO 1 //todo: needs to be changed
+#define PIN_SERVO 9 //todo: needs to be changed
 
 
 Servo servo;
@@ -20,7 +20,7 @@ void setup() {
 
   Serial.begin(BAUD_RATE);
   Serial.println("setup");
-
+git fetch
   servo.attach(PIN_SERVO);
 
   Serial.println("setup finished");
