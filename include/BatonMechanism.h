@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <Servo.h>
 
+#define ANGLE_UP 20
+#define ANGLE_DOWN 180
+
 class BatonMechanism 
 {
   public:
@@ -11,6 +14,9 @@ class BatonMechanism
     */
     BatonMechanism(int pin_servo);
 
+    void init();
+
+    void driveServo(int targetAngle, float speed);
 
     /*
     * this function unloads the baton
@@ -27,6 +33,6 @@ class BatonMechanism
     
   private:
     int _pin_servo = -1;
-    int _up_angle = 0, _down_angle = 180;
+    int _current_angle = 0;
     Servo _servo;
 };
