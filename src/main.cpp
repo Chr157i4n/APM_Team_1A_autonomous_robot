@@ -20,7 +20,6 @@ void setup() {
 
   Serial.begin(BAUD_RATE);
   Serial.println("setup");
-git fetch
   servo.attach(PIN_SERVO);
 
   Serial.println("setup finished");
