@@ -38,13 +38,13 @@ void BatonMechanism::unload(){
 }
 
 void BatonMechanism::tiltDown(){
-    _servo.write(_down_angle);
+    driveServo(_down_angle, 1);
 }
 
 void BatonMechanism::tiltUp(){
-    _servo.write(_up_angle);
+    driveServo(_up_angle, 1);
 }
 
 void BatonMechanism::tilt(int angle){
-    _servo.write(angle);
+    driveServo(angle, 1);
 }
