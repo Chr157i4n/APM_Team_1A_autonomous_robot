@@ -2,13 +2,17 @@
 
 
 BatonMechanism::BatonMechanism(int pin_servo){
-    _pin_servo = pin_servo;
+   
+    _pin_servo = 9;
+
+}
+
+void BatonMechanism::init(){
 
     _servo.attach(_pin_servo);
 
-    _servo.write(_up_angle);
-    _current_angle = _up_angle;
-
+    _servo.write(ANGLE_UP);
+    _current_angle = ANGLE_UP;
 
 }
 
@@ -39,11 +43,11 @@ void BatonMechanism::unload(){
 }
 
 void BatonMechanism::tiltDown(){
-    driveServo(_down_angle, 1);
+    driveServo(ANGLE_DOWN, 1);
 }
 
 void BatonMechanism::tiltUp(){
-    driveServo(_up_angle, 1);
+    driveServo(ANGLE_UP, 1);
 }
 
 void BatonMechanism::tilt(int angle){

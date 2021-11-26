@@ -98,7 +98,7 @@ void setup() {
   lineSensorPID.SetOutputLimits(-50,50);      // standard of the limits is (0, 255) and we need negative values
   lineSensorPID.SetMode(AUTOMATIC);
 
-  batonMechanism.tiltUp();
+  batonMechanism.init();
 
   delay(DURATION_INITIAL_WAIT);                 // Wait a couple of seconds to start
 
