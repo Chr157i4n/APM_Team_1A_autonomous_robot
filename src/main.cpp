@@ -20,7 +20,7 @@
 
 #define THRESHOLD_BATONSENSOR_DETECT 50 // todo: needs to be changed
 
-#define PRINT_DEBUG 0
+#define PRINT_DEBUG 1
 
 
 TB6612MotorShield motor;
@@ -159,7 +159,7 @@ void loop() {
 
     setMotorSpeeds(0, 0);
     motor.setBreak(true);
-    batonMechanism.tiltDown();
+    batonMechanism.unload();
     state = 3;
 
   } else {

@@ -34,6 +34,7 @@ void BatonMechanism::driveServo(int targetAngle, float speed){
 }
 
 void BatonMechanism::unload(){
+    Serial.println("Baton unloading");
     tiltDown();
 }
 
