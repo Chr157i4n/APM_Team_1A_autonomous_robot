@@ -20,7 +20,7 @@
 
 #define THRESHOLD_BATONSENSOR_DETECT 50 // todo: needs to be changed
 
-#define PRINT_DEBUG 1
+#define PRINT_DEBUG 0
 
 
 TB6612MotorShield motor;
@@ -53,7 +53,7 @@ unsigned short state = 0;
 
 //variables for driving
 int baseSpeed = 100;
-double lineSensorMax = 80, lineSensorMin = 24;  // black ground - white eletrical tape
+//double lineSensorMax = 80, lineSensorMin = 24;  // black ground - white eletrical tape
 //double lineSensorMax = 44, lineSensorMin = 24;  // black ground - malerkrepp
 double Setpoint = 512, lineSensorValue = 0, lineSensorPIDValue = 0;
 
@@ -90,7 +90,7 @@ void setup() {
   // the Setpoint is the value where the measured input value of the sensor should be
   // and this should be the middle of the max (white) and the min (black) value of the sensor.
   // we still need to calibrate this 
-  Setpoint = (lineSensorMax + lineSensorMin)*0.5;
+  //Setpoint = (lineSensorMax + lineSensorMin)*0.5;
 
   motor.setSpeeds(0,0);                         // Ruckbewegung der Motoren am Anfang fällt hiermit weg.
   motor.setBreak(true);
@@ -124,17 +124,26 @@ void loop() {
     Serial.println((String)"batonSensorValue: "+batonSensorValue);
 #endif
 
+    lineSensor.logValue();
+#if PRINT_DEBUG == 1
+    Serial.println((String)"currentValue: "+lineSensor.getValue()+"\t|\tloggedMean: "+lineSensor.getLoggedMean());
+#endif
+
     if(batonSensorValue < THRESHOLD_BATONSENSOR_DETECT){ 
       //if the brightness is below the THRESHOLD_BATONSENSOR_DETECT the robot goes into state 1
       state = 1;
       Serial.println("robot should start driving in 2 seconds");
       delay(DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED);
+      Setpoint = lineSensor.getLoggedMean();
+      Serial.println((String)"robot lineSensor Setpoint is: "+Setpoint);
       timeStart = timeCurrent;
     }
 
   } else if(state == 1){
-    distanceSecondRobot = ultrasonic.read();
-    Serial.println("Distance: "+distanceSecondRobot);
+      distanceSecondRobot = ultrasonic.read();
+#if PRINT_DEBUG == 1
+      Serial.println((String)"Distance: "+distanceSecondRobot);
+#endif
 
     if(distanceSecondRobot < 20 || timeElasped > DURATION_DRIVE_TIMEOUT){
       // if the measured distance of the ultrasonic sensor is below 20cm the robot should go into state 2 (stop)
