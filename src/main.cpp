@@ -132,10 +132,11 @@ void loop() {
     if(batonSensorValue < THRESHOLD_BATONSENSOR_DETECT){ 
       //if the brightness is below the THRESHOLD_BATONSENSOR_DETECT the robot goes into state 1
       state = 1;
-      Serial.println("robot should start driving in 2 seconds");
-      delay(DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED);
       Setpoint = lineSensor.getLoggedMean();
       Serial.println((String)"robot lineSensor Setpoint is: "+Setpoint);
+      Serial.println("robot should start driving in 2 seconds");
+      delay(DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED);
+      
       timeStart = timeCurrent;
     }
 
