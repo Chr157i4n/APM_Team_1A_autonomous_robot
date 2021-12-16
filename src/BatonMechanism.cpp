@@ -3,7 +3,7 @@
 
 BatonMechanism::BatonMechanism(int pin_servo){
    
-    _pin_servo = 9;
+    _pin_servo = pin_servo;
 
 }
 
