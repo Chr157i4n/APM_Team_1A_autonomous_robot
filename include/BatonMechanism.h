@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include <Servo.h>
+//#include <Servo.h>
 
-#define ANGLE_UP 20
-#define ANGLE_DOWN 180
+#define ANGLE_UP 240
+#define ANGLE_DOWN 20
 
 class BatonMechanism 
 {
@@ -34,5 +34,5 @@ class BatonMechanism
   private:
     int _pin_servo = -1;
     int _current_angle = 0;
-    Servo _servo;
+    //Servo _servo;
 };
