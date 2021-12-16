@@ -18,7 +18,7 @@
 #define DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED 2000 //ms
 #define DURATION_DRIVE_TIMEOUT 20000 //ms
 
-#define THRESHOLD_BATONSENSOR_DETECT 50 // todo: needs to be changed
+#define THRESHOLD_BATONSENSOR_DETECT 150 // todo: needs to be changed
 
 #define PRINT_DEBUG 0
 
