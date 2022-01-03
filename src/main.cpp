@@ -16,7 +16,7 @@
 
 #define DURATION_INITIAL_WAIT 1000 //ms
 #define DURATION_INITIAL_WAIT_AFTER_BATON_DETECTED 2000 //ms
-#define DURATION_DRIVE_TIMEOUT 20000 //ms
+#define DURATION_DRIVE_TIMEOUT 120000 //ms
 
 #define THRESHOLD_BATONSENSOR_DETECT 150 // todo: needs to be changed
 
@@ -146,7 +146,7 @@ void loop() {
       Serial.println((String)"Distance: "+distanceSecondRobot);
 #endif
 
-    if(distanceSecondRobot < 20 || timeElasped > DURATION_DRIVE_TIMEOUT){
+    if(distanceSecondRobot < 16 || timeElasped > DURATION_DRIVE_TIMEOUT){
       // if the measured distance of the ultrasonic sensor is below 20cm the robot should go into state 2 (stop)
       state = 2;
       Serial.println("destination or timeout reached");
